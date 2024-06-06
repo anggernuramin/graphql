@@ -5,7 +5,19 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 // mwmbuat query hello dengan mengembalikan string
 const typeDefs = `#graphql 
     type Query {
-        hello: String
+        hello: String,
+        users: UserResponse
+    }
+
+    type User {
+        name: String,
+        age: Int
+    }
+
+    type UserResponse {
+        status: Int,
+        message: String,
+        data: [User]
     }
 `;
 
@@ -14,6 +26,22 @@ const typeDefs = `#graphql
 const resolvers = {
   Query: {
     hello: () => "Hello world!",
+    users: () => {
+      return {
+        status: 200,
+        message: "success",
+        data: [
+          {
+            name: "John",
+            age: 30,
+          },
+          {
+            name: "Jane",
+            age: 25,
+          },
+        ],
+      };
+    },
   },
 };
 
@@ -29,5 +57,21 @@ const { url } = await startStandaloneServer(server, {
     port: 4000,
   },
 });
+
+// Cara ngequery menggunakan grapql sesuaikan dengan data response dari resolver
+// query {
+//   users {
+//     status
+//     message
+//     data {
+//       name
+//       age
+//     }
+//   }
+// }
+
+// query {
+// hello
+// }
 
 console.log(`Server ready at ${url}`);
